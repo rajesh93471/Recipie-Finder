@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about the impact of food waste in landfills and solutions">
+    <title>Food Waste in Landfills: A Growing Problem</title>
+    <link rel="stylesheet" href="styles1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="icon" href="faviconMain.png">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav class="nav-menu">
+        <div class="logo">🌱</div>
+        <ul class="nav-links">
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#india">India</a></li>
+            <li><a href="#solutions">Solutions</a></li>
+        </ul>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar"></div>
+
+    <header class="animate-fade-in">
+        <div class="header-content">
+            <h1>The Rotting Reality: Food Waste in Landfills</h1>
+            <p class="subtitle">Exploring the Environmental Impact and Solutions</p>
+        </div>
+        <div class="header-bg"></div>
+    </header>
+    
+    <main>
+        <section id="problem" class="problem animate-on-scroll">
+            <h2>The Problem</h2>
+            <div class="content-wrapper">
+                <p>Food waste in landfills is a significant environmental issue. When food decomposes in the oxygen-deprived environment of a landfill, it produces <span class="methane-text" data-tooltip="A greenhouse gas 25 times more potent than CO2">methane</span>, a potent greenhouse gas that contributes significantly to climate change. This decomposition process also creates leachate, a liquid that can contaminate soil and groundwater.</p>
+                <div class="problem-image image-card">
+                    <img src="foodWasteLandFill.png" alt="Landfill with food waste">
+                    <div class="image-overlay">
+                        <p>Impact on Environment</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="india" class="india animate-on-scroll">
+            <h2>The Situation in India</h2>
+            <div class="content-wrapper">
+                <p>India faces a massive challenge with food waste. Significant amounts of food are lost during production, transportation, storage, and consumption. Factors contributing to this include inadequate infrastructure, inefficient supply chains, and social practices.</p>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <span class="stat-number">40%</span>
+                        <p>Food Lost in Production</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">₹92k Cr</span>
+                        <p>Annual Economic Loss</p>
+                    </div>
+                </div>
+                <div class="india-image image-card">
+                    <img src="stats.jpg" alt="Food waste in India">
+                    <div class="image-overlay">
+                        <p>Statistical Overview</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solutions" class="solutions animate-on-scroll">
+            <h2>What Can Be Done?</h2>
+            <div class="content-wrapper">
+                <div class="solutions-grid">
+                    <div class="solution-card">
+                        <div class="card-icon">🌱</div>
+                        <h3>Reduce</h3>
+                        <p>Implement better inventory management and portion control</p>
+                    </div>
+                    <div class="solution-card">
+                        <div class="card-icon">♻️</div>
+                        <h3>Recycle</h3>
+                        <p>Convert food waste into compost and biogas</p>
+                    </div>
+                    <div class="solution-card">
+                        <div class="card-icon">📱</div>
+                        <h3>Technology</h3>
+                        <p>Use smart storage and tracking systems</p>
+                    </div>
+                </div>
+                <div class="india-image image-card">
+                    <img src="stats1.jpg" alt="Food waste statistics">
+                    <div class="image-overlay">
+                        <p>Solution Impact</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Food Wastage Project By Batch - 09</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: info@foodwaste.org</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Food Waste Awareness</p>
+        </div>
+    </footer>
+
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.progress-bar').style.width = scrolled + '%';
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

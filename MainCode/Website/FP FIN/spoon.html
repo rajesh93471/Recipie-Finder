@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Recipe Finder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8; /* Light background */
+            color: #333; /* Dark text for contrast */
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #557a41; /* Earthy green */
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center; /* Center the search bar */
+            margin: 20px auto; /* Center with margin */
+            max-width: 600px; /* Limit width */
+            gap: 10px;
+        }
+
+        #searchInput {
+            flex: 1;
+            padding: 12px; /* Increased padding */
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Include padding in width */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        button {
+            padding: 12px 25px; /* Increased padding */
+            background-color: #557a41; /* Earthy green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease; /* Smooth transition */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        button:hover {
+            background-color: #435e2f; /* Darker green on hover */
+        }
+
+        #loading {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #777;
+            display: none;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjusted minmax */
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .recipe-card {
+            border-radius: 8px; /* More rounded corners */
+            overflow: hidden; /* Hide overflowing image */
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions */
+            background-color: white;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px); /* Lift up slightly on hover */
+            box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Cover the entire area */
+            display: block; /* Prevent image from creating extra space */
+        }
+
+        .recipe-card-content { /* New container for text content */
+            padding: 15px;
+        }
+
+        .recipe-card h3 {
+            margin-top: 0;
+            color: #557a41; /* Earthy green for titles */
+        }
+
+        .recipe-card p {
+            margin-bottom: 5px;
+        }
+
+        .recipe-card a {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #557a41; /* Earthy green */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .recipe-card a:hover {
+            background-color: #435e2f;
+        }
+
+        /* Footer Style */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #333; /* Darker footer */
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Food Recipe Finder</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Enter ingredients (comma separated)...">
+        <button id="searchButton">Search</button>
+    </div>
+    <div id="loading">Loading...</div>
+    <div id="results"></div>
+    <script>
+      // Get your API key from https://spoonacular.com/food-api
+      // For production, move your API key to a secure server or environment variable.
+      const API_KEY =  'dc25198905d143ab92093e318c70dfb4'; // Replace with your actual API key
+  
+      // Utility function to create a URL-friendly slug from a recipe title.
+      function slugify(text) {
+        return text.toString().toLowerCase()
+          .replace(/\s+/g, '-')           // Replace spaces with -
+          .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+          .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+          .replace(/^-+/, '')             // Trim - from start of text
+          .replace(/-+$/, '');            // Trim - from end of text
+      }
+  
+      async function searchRecipes() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.trim();
+        const resultsContainer = document.getElementById('results');
+        const loadingIndicator = document.getElementById('loading');
+  
+        if (!searchTerm) {
+          alert('Please enter some ingredients');
+          return;
+        }
+        
+        // Show the loading indicator and clear previous results.
+        loadingIndicator.style.display = 'block';
+        resultsContainer.innerHTML = '';
+  
+        try {
+          const response = await fetch(
+            `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${encodeURIComponent(searchTerm)}&number=10&apiKey=${API_KEY}`
+          );
+  
+          if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+          }
+  
+          const recipes = await response.json();
+          displayRecipes(recipes);
+        } catch (error) {
+          resultsContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+        } finally {
+          // Hide the loading indicator once the request is complete.
+          loadingIndicator.style.display = 'none';
+        }
+      }
+  
+      function displayRecipes(recipes) {
+        const resultsContainer = document.getElementById('results');
+  
+        if (recipes.length === 0) {
+          resultsContainer.innerHTML = '<p>No recipes found. Try different ingredients.</p>';
+          return;
+        }
+  
+        const recipesHTML = recipes.map(recipe => {
+          // Construct a link to the full recipe using a slugified title and recipe id.
+          const recipeUrl = `https://spoonacular.com/recipes/${slugify(recipe.title)}-${recipe.id}`;
+          return `
+            <div class="recipe-card">
+              <h3>${recipe.title}</h3>
+              <img class="recipe-image" src="${recipe.image}" alt="${recipe.title}">
+              <p>Used Ingredients: ${recipe.usedIngredientCount}</p>
+              <p>Missing Ingredients: ${recipe.missedIngredientCount}</p>
+              <a href="${recipeUrl}" target="_blank">View Recipe Details</a>
+            </div>
+          `;
+        }).join('');
+  
+        resultsContainer.innerHTML = `<div class="grid-container">${recipesHTML}</div>`;
+      }
+  
+      // Attach event listeners.
+      document.getElementById('searchButton').addEventListener('click', searchRecipes);
+      document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          searchRecipes();
+        }
+      });
+    </script> 
+    <footer>
+        &copy; 2023 Food Recipe Finder. All rights reserved.  </footer>
+</body>
+</html>
